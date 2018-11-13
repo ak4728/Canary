@@ -40,15 +40,18 @@ class Score():
         # conn.set_trace_callback(print)
         t = (message.author.id, )
         if not c.execute('SELECT * FROM Members WHERE ID=?', t).fetchall():
-            t = (message.author.id, message.author.display_name, score)
-            c.execute('INSERT INTO Members VALUES (?,?,?)', t)
+            if (score == 1):
+                t = (message.author.id, message.author.display_name, 1, 0);
+            else:
+                t = (message.author.id, message.author.display_name, 0, 1);
+            c.execute('INSERT INTO Members VALUES (?,?,?,?)', t)
             conn.commit()
             conn.close()
         else:
             if score == 1:
-                c.execute('UPDATE Members SET Score=Score+1 WHERE ID=?', t)
+                c.execute('UPDATE Members SET UpScore=UpScore+1 WHERE ID=?', t)
             else:
-                c.execute('UPDATE Members SET Score=Score-1 WHERE ID=?', t)
+                c.execute('UPDATE Members SET DownScore=DownScore+1 WHERE ID=?', t)
             conn.commit()
             conn.close()
 
@@ -77,17 +80,21 @@ class Score():
         c = conn.cursor()
         t = (message.author.id, )
         if not c.execute('SELECT * FROM Members WHERE ID=?', t).fetchall():
-            t = (message.author.id, message.author.display_name, score)
-            c.execute('INSERT INTO Members VALUES (?,?,?)', t)
-            conn.commit()
-            conn.close()
+            if (score == 1):
+                t = (message.author.id, message.author.display_name, 0, 1);
+            else:
+                t = (message.author.id, message.author.display_name, 1, 0);
+
+            c.execute('INSERT INTO Members VALUES (?,?,?,?)', t)
+        conn.commit()
+        conn.close()
         else:
             if score == 1:
-                c.execute('UPDATE Members SET Score=Score+1 WHERE ID=?', t)
+                c.execute('UPDATE Members SET DownScore=DownScore-1 WHERE ID=?', t)
             else:
-                c.execute('UPDATE Members SET Score=Score-1 WHERE ID=?', t)
-            conn.commit()
-            conn.close()
+                c.execute('UPDATE Members SET UpScore=UpScore-1 WHERE ID=?', t)
+        conn.commit()
+        conn.close()
 
     async def on_member_update(self, before, after):
         if before.display_name == after.display_name:
