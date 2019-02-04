@@ -23,6 +23,14 @@ class Helpers():
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.command()
+    async def helpmsg(self, ctx, *, query):
+        dest = ctx.message.author if len(query) == 0 else ctx.message.channel
+
+        await ctx.message.author.send('hello')
+
+        
+
     @commands.command(aliases=['exams'])
     async def exam(self, ctx):
         """Retrieves the exam schedule link from McGill's Exam website."""
